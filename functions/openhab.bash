@@ -216,17 +216,15 @@ multitail_openhab_scheme() {
 ##    openhab_misc()
 ##
 openhab_misc() {
-  local COMMON_JAVA_OPTS="-XX:+ExitOnOutOfMemoryError -Dxtext.qn.interning=true -XX:-TieredCompilation -XX:G1PeriodicGCInterval=60000 -XX:G1PeriodicGCSystemLoadThreshold=4 -XX:MinHeapFreeRatio=4 -XX:MaxHeapFreeRatio=12"
-  
   if ! is_arm; then return 0; fi
   echo -n "$(timestamp) [openHABian] Optimizing openHAB to run on low memory single board computers... "
 
   if has_lowmem; then
-    if cond_redirect sed -i -e 's|^EXTRA_JAVA_OPTS=.*$|EXTRA_JAVA_OPTS="-Xms16m -Xmx256m ${COMMON_JAVA_OPTS}"|g' /etc/default/openhab; then echo "OK"; else echo "FAILED"; return 1; fi
+    if cond_redirect sed -i -e 's|^EXTRA_JAVA_OPTS=.*$|EXTRA_JAVA_OPTS="-Xms16m -Xmx256m -XX:+ExitOnOutOfMemoryError -Dxtext.qn.interning=true -XX:-TieredCompilation -XX:G1PeriodicGCInterval=60000 -XX:G1PeriodicGCSystemLoadThreshold=4 -XX:MinHeapFreeRatio=4 -XX:MaxHeapFreeRatio=12"|g' /etc/default/openhab; then echo "OK"; else echo "FAILED"; return 1; fi
   elif has_highmem; then
-    if cond_redirect sed -i -e '/^[^#]/ s/\(^.*EXTRA_JAVA_OPTS=.*$\)/EXTRA_JAVA_OPTS="-Xms192m -Xmx768m ${COMMON_JAVA_OPTS}"/' /etc/default/openhab; then echo "OK"; else echo "FAILED"; return 1; fi
+    if cond_redirect sed -i -e '/^[^#]/ s/\(^.*EXTRA_JAVA_OPTS=.*$\)/EXTRA_JAVA_OPTS="-Xms192m -Xmx768m -XX:+ExitOnOutOfMemoryError -Dxtext.qn.interning=true -XX:-TieredCompilation -XX:G1PeriodicGCInterval=60000 -XX:G1PeriodicGCSystemLoadThreshold=4 -XX:MinHeapFreeRatio=4 -XX:MaxHeapFreeRatio=12"/' /etc/default/openhab; then echo "OK"; else echo "FAILED"; return 1; fi
   else
-    if cond_redirect sed -i -e 's|^EXTRA_JAVA_OPTS=.*$|EXTRA_JAVA_OPTS="-Xms192m -Xmx384m ${COMMON_JAVA_OPTS}"|g' /etc/default/openhab; then echo "OK"; else echo "FAILED"; return 1; fi
+    if cond_redirect sed -i -e 's|^EXTRA_JAVA_OPTS=.*$|EXTRA_JAVA_OPTS="-Xms192m -Xmx384m -XX:+ExitOnOutOfMemoryError -Dxtext.qn.interning=true -XX:-TieredCompilation -XX:G1PeriodicGCInterval=60000 -XX:G1PeriodicGCSystemLoadThreshold=4 -XX:MinHeapFreeRatio=4 -XX:MaxHeapFreeRatio=12"|g' /etc/default/openhab; then echo "OK"; else echo "FAILED"; return 1; fi
   fi
 
   echo -n "$(timestamp) [openHABian] Setting openHAB HTTP/HTTPS ports... "
